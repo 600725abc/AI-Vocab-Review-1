@@ -1,0 +1,275 @@
+<html><head><base href="https://websim.patricialiu.com/ai-quiz/">
+<title>AI Vocabulary Review Quiz</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f0f0f0;
+    }
+    #quiz-container {
+        background-color: white;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+        color: #333;
+        text-align: center;
+    }
+    .question {
+        margin-bottom: 20px;
+    }
+    .dialogue {
+        margin-bottom: 15px;
+        line-height: 1.6;
+    }
+    .person {
+        font-weight: bold;
+    }
+    .answer {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    .answer:hover {
+        background-color: #f0f0f0;
+    }
+    .correct {
+        background-color: #d4edda;
+        color: #155724;
+    }
+    .incorrect {
+        background-color: #f8d7da;
+        color: #721c24;
+    }
+    #result {
+        font-weight: bold;
+        text-align: center;
+        margin-top: 20px;
+    }
+    #restart, #next {
+        display: block;
+        width: 200px;
+        margin: 20px auto;
+        padding: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    #restart:hover, #next:hover {
+        background-color: #0056b3;
+    }
+    #designer {
+        text-align: center;
+        font-style: italic;
+        margin-top: 20px;
+        color: #666;
+    }
+    #progress {
+        text-align: center;
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+    #explanation {
+        margin-top: 15px;
+        padding: 10px;
+        background-color: #e9ecef;
+        border-radius: 5px;
+    }
+    .answer-explanation {
+        margin-top: 15px;
+        padding: 10px;
+        background-color: #e9ecef;
+        border-radius: 5px;
+        display: none;
+    }
+</style>
+</head>
+<body>
+<div id="quiz-container">
+    <h1>AI Vocabulary Review Quiz</h1>
+    <div id="progress"></div>
+    <div id="question-container"></div>
+    <div id="explanation"></div>
+    <button id="next" style="display: none;">Next</button>
+    <div id="result"></div>
+    <button id="restart" style="display: none;">Restart Quiz</button>
+</div>
+<div id="designer">Designed by Patricia Liu on August 2024</div>
+
+<script>
+const questions = [
+    {
+        question: "<div class='dialogue'><p><span class='person'>Person A:</span> \"I need to develop an app quickly but don't have much coding skill. What should I use?\"</p><p><span class='person'>Person B:</span> \"Try a __________ platform to create apps with minimal coding.\"</p></div>",
+        answers: [
+            "multi-modality",
+            "digital twin",
+            "low-code",
+            "GPU"
+        ],
+        correct: 2,
+        explanation: "Low-code platforms allow users to develop applications with minimal hand-coding, using visual interfaces and pre-built components."
+    },
+    {
+        question: "<div class='dialogue'><p><span class='person'>Person A:</span> \"Can I build software without writing any code?\"</p><p><span class='person'>Person B:</span> \"Yes, use a __________ platform for that.\"</p></div>",
+        answers: [
+            "no-code",
+            "bias",
+            "synthetic data",
+            "low-code"
+        ],
+        correct: 0,
+        explanation: "No-code platforms enable users to create applications without writing any code, typically using drag-and-drop interfaces and pre-built modules."
+    },
+    {
+        question: "<div class='dialogue'><p><span class='person'>Person A:</span> \"How can I speed up my machine learning model training?\"</p><p><span class='person'>Person B:</span> \"Consider using a __________ for parallel processing.\"</p></div>",
+        answers: [
+            "digital twin",
+            "GPU",
+            "low-code",
+            "synthetic data"
+        ],
+        correct: 1,
+        explanation: "GPUs (Graphics Processing Units) are highly efficient at parallel processing, making them ideal for speeding up machine learning model training."
+    },
+    {
+        question: "<div class='dialogue'><p><span class='person'>Person A:</span> \"How can I create a virtual replica of my physical assets?\"</p><p><span class='person'>Person B:</span> \"Use a __________, which mirrors physical objects or systems.\"</p></div>",
+        answers: [
+            "multi-modality",
+            "synthetic data",
+            "digital twin",
+            "GPU"
+        ],
+        correct: 2,
+        explanation: "A digital twin is a virtual representation of a physical object or system, used for simulation, analysis, and optimization."
+    },
+    {
+        question: "<div class='dialogue'><p><span class='person'>Person A:</span> \"I need more data for training my AI model but can't access enough real data. What should I do?\"</p><p><span class='person'>Person B:</span> \"Generate __________ to simulate real-world data.\"</p></div>",
+        answers: [
+            "no-code",
+            "bias",
+            "synthetic data",
+            "digital twin"
+        ],
+        correct: 2,
+        explanation: "Synthetic data is artificially generated data that mimics real-world data, useful for training AI models when real data is scarce or hard to obtain."
+    },
+    {
+        question: "<div class='dialogue'><p><span class='person'>Person A:</span> \"I want my AI to process text, images, and audio. What concept is that?\"</p><p><span class='person'>Person B:</span> \"That's called __________, for handling multiple data types.\"</p></div>",
+        answers: [
+            "low-code",
+            "GPU",
+            "multi-modality",
+            "synthetic data"
+        ],
+        correct: 2,
+        explanation: "Multi-modality in AI refers to the ability to process and integrate multiple types of data or sensory inputs, such as text, images, and audio."
+    },
+    {
+        question: "<div class='dialogue'><p><span class='person'>Person A:</span> \"Why is my AI model giving skewed results?\"</p><p><span class='person'>Person B:</span> \"It might be due to __________ in the training data or algorithm.\"</p></div>",
+        answers: [
+            "no-code",
+            "bias",
+            "low-code",
+            "digital twin"
+        ],
+        correct: 1,
+        explanation: "Bias in AI refers to systematic errors in the training data or algorithm that can lead to unfair or skewed results, often reflecting human biases."
+    }
+];
+
+let currentQuestion = 0;
+let score = 0;
+
+const questionContainer = document.getElementById('question-container');
+const explanationContainer = document.getElementById('explanation');
+const resultContainer = document.getElementById('result');
+const restartButton = document.getElementById('restart');
+const nextButton = document.getElementById('next');
+const progressContainer = document.getElementById('progress');
+
+function loadQuestion() {
+    if (currentQuestion < questions.length) {
+        const question = questions[currentQuestion];
+        progressContainer.textContent = `Question ${currentQuestion + 1}/${questions.length}`;
+        let questionHTML = `<div class="question">
+            ${question.question}
+        `;
+        for (let i = 0; i < question.answers.length; i++) {
+            questionHTML += `<button class="answer" onclick="checkAnswer(${i})">${question.answers[i]}</button>`;
+        }
+        questionHTML += `<div class="answer-explanation"></div></div>`;
+        questionContainer.innerHTML = questionHTML;
+        explanationContainer.innerHTML = '';
+        nextButton.style.display = 'none';
+    } else {
+        showResult();
+    }
+}
+
+function checkAnswer(answerIndex) {
+    const question = questions[currentQuestion];
+    const answerButtons = document.querySelectorAll('.answer');
+    const answerExplanation = document.querySelector('.answer-explanation');
+    
+    answerButtons.forEach(button => button.disabled = true);
+    
+    if (answerIndex === question.correct) {
+        answerButtons[answerIndex].classList.add('correct');
+        score++;
+        playSound('https://websim.patricialiu.com/ai-quiz/sounds/applause.mp3');
+    } else {
+        answerButtons[answerIndex].classList.add('incorrect');
+        answerButtons[question.correct].classList.add('correct');
+        playSound('https://websim.patricialiu.com/ai-quiz/sounds/siren.mp3');
+    }
+    
+    answerExplanation.innerHTML = `<p><strong>Answer:</strong> ${question.answers[question.correct]}</p>
+                                   <p><strong>Explanation:</strong> ${question.explanation}</p>`;
+    answerExplanation.style.display = 'block';
+    nextButton.style.display = 'block';
+}
+
+function showResult() {
+    questionContainer.innerHTML = '';
+    explanationContainer.innerHTML = '';
+    progressContainer.textContent = '';
+    if (score >= 4) {
+        resultContainer.innerHTML = `Congratulations! You got ${score} out of 7 questions correct.`;
+    } else {
+        resultContainer.innerHTML = `You got ${score} out of 7 questions correct. Keep practicing!`;
+    }
+    restartButton.style.display = 'block';
+    nextButton.style.display = 'none';
+}
+
+function restartQuiz() {
+    currentQuestion = 0;
+    score = 0;
+    resultContainer.innerHTML = '';
+    restartButton.style.display = 'none';
+    loadQuestion();
+}
+
+function playSound(url) {
+    new Audio(url).play();
+}
+
+restartButton.addEventListener('click', restartQuiz);
+nextButton.addEventListener('click', () => {
+    currentQuestion++;
+    loadQuestion();
+});
+
+loadQuestion();
+</script>
+</body></html>
